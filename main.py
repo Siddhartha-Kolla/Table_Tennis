@@ -6,18 +6,19 @@ class TableTenins:
         self.rounds = rounds
         self.players = players
         self.shuffled_combinations = list(combinations(range(1,players+1),2))
+        print(len(self.shuffled_combinations))
         # random.shuffle(self.shuffled_combinations)
         self.points = []
 
     def distribute_players(self):
         paired_players = []
-        while len(paired_players) != self.players:
-            for i in self.shuffled_combinations:
-                s = i
-                if (not s[0] in paired_players) and (not s[1] in paired_players):
-                    paired_players.append(s[0])
-                    paired_players.append(s[1])
-                    self.shuffled_combinations.remove(s)
+        while len(paired_players) != int(self.players//2):
+            turned_list = self.shuffled_combinations[int(len(self.shuffled_combinations)//2) :] + self.shuffled_combinations[:int(len(self.shuffled_combinations)//2)]
+            for i in turned_list:
+                if (not i[0] in set(elem for tpl in paired_players for elem in tpl)) and (not i[1] in set(elem for tpl in paired_players for elem in tpl)):
+                    paired_players.append(i)
+                    self.shuffled_combinations.remove(i)
+                    break
         return paired_players
 
     # You will already get a list of teams. I think it's already on self class. You must decide which teams plays against whom.
@@ -30,11 +31,16 @@ class TableTenins:
 
     def main(self):
         if self.players % 4 == 0:
+            print(self.shuffled_combinations)
             for i in range(self.rounds):
+                print(f"Round {i+1}")
+                print(len(self.shuffled_combinations))
                 print(self.distribute_players())
 
 
 if __name__ == "__main__":
     print("Starting")
-    t = TableTenins(6,16)
+    players = 12
+    max_rounds = int((len(list(combinations(range(1,players+1),2))))//(players//2))
+    t = TableTenins(max_rounds,players)
     t.main()
